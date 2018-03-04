@@ -2,6 +2,7 @@ package hess.fabian.filmverwaltung.mainActivity.movies;
 
 import android.media.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,22 +32,24 @@ public class MovieContent {
 
 
 
-
-
-    public static class MovieItem {
+    public static class MovieItem implements Serializable {
         public final String id;
         public final String title;
         //public final Image poster;
+        public final String overview;
 
-        public MovieItem(String id, String title/*Image poster*/) {
+        public MovieItem(String id, String title, /*Image poster*/ String overview) {
             this.id = id;
             this.title = title;
             //this.poster = poster;
+            this.overview = overview;
         }
 
         @Override
         public String toString() {
             return title;
         }
+
+
     }
 }

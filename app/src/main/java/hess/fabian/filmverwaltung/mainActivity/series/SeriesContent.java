@@ -2,6 +2,7 @@ package hess.fabian.filmverwaltung.mainActivity.series;
 
 import android.media.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,15 +21,17 @@ public class SeriesContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    public static class SeriesItem {
+    public static class SeriesItem implements Serializable {
         public final String id;
         public final  String title;
         //public final Image poster;
+        public final String overview;
 
-        public SeriesItem(String id, String title/*, Image poster*/) {
+        public SeriesItem(String id, String title/*, Image poster*/, String overview) {
             this.id = id;
             this.title = title;
             //this.poster = poster;
+            this.overview = overview;
         }
 
         @Override
