@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="hess.fabian.filmverwaltung.AddActivity"
+    tools:context="hess.fabian.filmverwaltung.addActivity.AddActivity"
     tools:showIn="@layout/activity_add">
 
 </android.support.constraint.ConstraintLayout>
