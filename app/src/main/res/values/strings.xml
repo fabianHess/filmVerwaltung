@@ -6,4 +6,9 @@
     <string name="movies_page_title">Filme</string>
     <string name="series_page_title">Serien</string>
     <string name="add">Hinzufügen</string>
+    <string name="title_detailitem_list">DetailItems</string>
+    <string name="title_detailitem_detail">DetailItem Detail</string>
+    <string name="title_activity_detail">DetailActivity</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
