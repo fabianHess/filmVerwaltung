@@ -8,7 +8,8 @@ import org.json.JSONObject;
  * Created by Fabian on 04.03.2018.
  */
 
-public class TvResultsPage {
+public class ResultsPage {
+
     private int vote_count;
     private int id;
     private boolean video;
@@ -25,7 +26,7 @@ public class TvResultsPage {
     private String release_date;
 
 
-    public TvResultsPage(JSONObject jsonObject) throws JSONException {
+    public ResultsPage(JSONObject jsonObject) throws JSONException {
         JSONArray results = (JSONArray) jsonObject.get("results");
         JSONObject object = results.getJSONObject(0);
         extractValues(object);
