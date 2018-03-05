@@ -12,6 +12,8 @@ import android.widget.TextView;
 import hess.fabian.filmverwaltung.R;
 import hess.fabian.filmverwaltung.mainActivity.movies.MovieContent;
 import hess.fabian.filmverwaltung.mainActivity.series.SeriesContent;
+import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
+import hess.fabian.filmverwaltung.tmdbApi.TmdbSearch;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -23,13 +25,20 @@ public class DetailActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.detail_overview_textview);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
+
+        TmdbSearch tmdbSearch = new TmdbSearch();
+        MovieResultsPage movieResultsPage = tmdbSearch.searchMovie("Harry Potter");
+
+
         Intent intent = getIntent();
         if(intent.getSerializableExtra("movies") != null) {
             MovieContent.MovieItem item = (MovieContent.MovieItem) intent.getSerializableExtra("movies");
-            toolbar.setTitle(item.title);
+            //toolbar.setTitle(item.title);
+            toolbar.setTitle(movieResultsPage.getTitle()); // TestTitle
             setSupportActionBar(toolbar);
 
-            textView.setText(item.overview);
+            //textView.setText(item.overview);
+            textView.setText(movieResultsPage.getOverview());
         }
         else if(intent.getSerializableExtra("series") != null) {
             SeriesContent.SeriesItem item = (SeriesContent.SeriesItem) intent.getSerializableExtra("series");
