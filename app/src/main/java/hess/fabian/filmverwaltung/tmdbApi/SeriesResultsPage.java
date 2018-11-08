@@ -1,11 +1,14 @@
 package hess.fabian.filmverwaltung.tmdbApi;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONObject;
 
-public class SeriesResultsPage {
-
+/**
+ * Created by Fabian on 08.11.2018
+ */
+public class SeriesResultsPage implements Parcelable {
 
     private String original_name;
     private int id;
@@ -19,16 +22,10 @@ public class SeriesResultsPage {
     private String original_language;
     private String backdrop_path;
     private String overview;
+    private Bitmap poster;
+    private Bitmap backdrop;
 
-    public SeriesResultsPage(JSONObject jsonObject, int resultNo) throws JSONException {
-        if(jsonObject != null) {
-            JSONArray results = (JSONArray) jsonObject.get("results");
-            JSONObject object = results.getJSONObject(resultNo);
-            extractValues(object);
-        }
-    }
-
-    private void extractValues(JSONObject jsonObject) {
+    public SeriesResultsPage(JSONObject jsonObject) {
         original_name       = jsonObject.optString("original_name");
         id                  = jsonObject.optInt("id");
         title               = jsonObject.optString("name");
@@ -43,7 +40,34 @@ public class SeriesResultsPage {
         overview            = jsonObject.optString("overview");
     }
 
+    protected SeriesResultsPage(Parcel in) {
+        original_name = in.readString();
+        id = in.readInt();
+        title = in.readString();
+        vote_count = in.readInt();
+        vote_average = in.readDouble();
+        poster_path = in.readString();
+        first_air_date = in.readString();
+        popularity = in.readDouble();
+        genre_ids = in.createIntArray();
+        original_language = in.readString();
+        backdrop_path = in.readString();
+        overview = in.readString();
+        poster = in.readParcelable(Bitmap.class.getClassLoader());
+        backdrop = in.readParcelable(Bitmap.class.getClassLoader());
+    }
 
+    public static final Creator<SeriesResultsPage> CREATOR = new Creator<SeriesResultsPage>() {
+        @Override
+        public SeriesResultsPage createFromParcel(Parcel in) {
+            return new SeriesResultsPage(in);
+        }
+
+        @Override
+        public SeriesResultsPage[] newArray(int size) {
+            return new SeriesResultsPage[size];
+        }
+    };
 
     public String getOriginal_name() {
         return original_name;
@@ -141,4 +165,42 @@ public class SeriesResultsPage {
         this.overview = overview;
     }
 
+    public Bitmap getPoster() {
+        return poster;
+    }
+
+    public void setPoster(Bitmap poster) {
+        this.poster = poster;
+    }
+
+    public Bitmap getBackdrop() {
+        return backdrop;
+    }
+
+    public void setBackdrop(Bitmap backdrop) {
+        this.backdrop = backdrop;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(original_name);
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeInt(vote_count);
+        parcel.writeDouble(vote_average);
+        parcel.writeString(poster_path);
+        parcel.writeString(first_air_date);
+        parcel.writeDouble(popularity);
+        parcel.writeIntArray(genre_ids);
+        parcel.writeString(original_language);
+        parcel.writeString(backdrop_path);
+        parcel.writeString(overview);
+        parcel.writeParcelable(poster, i);
+        parcel.writeParcelable(backdrop, i);
+    }
 }

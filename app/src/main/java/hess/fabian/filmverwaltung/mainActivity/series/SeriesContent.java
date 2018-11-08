@@ -33,8 +33,5 @@ public class SeriesContent {
             //this.poster = poster;
             this.overview = overview;
         }
-
-        @Override
-        public String toString() { return title; }
     }
 }

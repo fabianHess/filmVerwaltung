@@ -1,14 +1,16 @@
 package hess.fabian.filmverwaltung.tmdbApi;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONObject;
 
 /**
  * Created by Fabian on 04.03.2018.
  */
 
-public class MovieResultsPage {
+public class MovieResultsPage implements Parcelable {
+
     private int vote_count;
     private int id;
     private boolean video;
@@ -23,18 +25,10 @@ public class MovieResultsPage {
     private boolean adult;
     private String overview;
     private String release_date;
+    private Bitmap poster;
+    private Bitmap backdrop;
 
-
-    public MovieResultsPage(JSONObject jsonObject, int resultNo) throws JSONException {
-        if(jsonObject != null)
-        {
-            JSONArray results = (JSONArray) jsonObject.get("results");
-            JSONObject object = results.getJSONObject(resultNo);
-            extractValues(object);
-        }
-    }
-
-    private void extractValues(JSONObject jsonObject) {
+    public MovieResultsPage(JSONObject jsonObject) {
         vote_count          = jsonObject.optInt("vote_count");
         id                  = jsonObject.optInt("id");
         video               = jsonObject.optBoolean("video");
@@ -50,7 +44,35 @@ public class MovieResultsPage {
         release_date        = jsonObject.optString("release_date");
     }
 
+    protected MovieResultsPage(Parcel in) {
+        vote_count = in.readInt();
+        id = in.readInt();
+        video = in.readByte() != 0;
+        vote_average = in.readDouble();
+        title = in.readString();
+        popularity = in.readDouble();
+        poster_path = in.readString();
+        original_language = in.readString();
+        original_title = in.readString();
+        backdrop_path = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        release_date = in.readString();
+        poster = in.readParcelable(Bitmap.class.getClassLoader());
+        backdrop = in.readParcelable(Bitmap.class.getClassLoader());
+    }
 
+    public static final Creator<MovieResultsPage> CREATOR = new Creator<MovieResultsPage>() {
+        @Override
+        public MovieResultsPage createFromParcel(Parcel in) {
+            return new MovieResultsPage(in);
+        }
+
+        @Override
+        public MovieResultsPage[] newArray(int size) {
+            return new MovieResultsPage[size];
+        }
+    };
 
     public int getVote_count() {
         return vote_count;
@@ -154,5 +176,45 @@ public class MovieResultsPage {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    public Bitmap getPoster() {
+        return poster;
+    }
+
+    public void setPoster(Bitmap poster) {
+        this.poster = poster;
+    }
+
+    public Bitmap getBackdrop() {
+        return backdrop;
+    }
+
+    public void setBackdrop(Bitmap backdrop) {
+        this.backdrop = backdrop;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(vote_count);
+        parcel.writeInt(id);
+        parcel.writeByte((byte) (video ? 1 : 0));
+        parcel.writeDouble(vote_average);
+        parcel.writeString(title);
+        parcel.writeDouble(popularity);
+        parcel.writeString(poster_path);
+        parcel.writeString(original_language);
+        parcel.writeString(original_title);
+        parcel.writeString(backdrop_path);
+        parcel.writeByte((byte) (adult ? 1 : 0));
+        parcel.writeString(overview);
+        parcel.writeString(release_date);
+        parcel.writeParcelable(poster, i);
+        parcel.writeParcelable(backdrop, i);
     }
 }

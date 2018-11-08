@@ -1,6 +1,5 @@
 package hess.fabian.filmverwaltung.tmdbApi;
 
-import android.graphics.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,25 +27,39 @@ public class TmdbSearch {
     //private String query;   // searched item
 
     // https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
-    public TmdbSearch(){
 
+    // Images
+    // https://image.tmdb.org/t/p/w500/<poster_path>
+    /* https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
+    "backdrop_sizes": ["w300", "w780", "w1280", "original"],
+    "poster_sizes": ["w92", "w154", "w185", "w342", "w500", "w780", "original"],
+    */
+
+
+
+
+
+    public TmdbSearch(){
     }
 
     public List<MovieResultsPage> searchMovie(String query) {
         String searchURL = TMDB_BASIC + TMDB_MOVIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
-        JsonReader jsonReader = null;
 
         try {
-            jsonReader = new JsonReader(searchURL);
+            JsonReader jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
             List<MovieResultsPage> movieResultsPageList = new ArrayList<>();
 
-            for(int index = 0; index < jsonObject.length(); index++) {
-                MovieResultsPage movieResultsPage = new MovieResultsPage(jsonObject, index);
-                movieResultsPageList.add(movieResultsPage);
-            }
+            if (jsonObject != null) {
+                JSONArray results = (JSONArray) jsonObject.get("results");
 
-            return movieResultsPageList;
+                for (int index = 0; index < results.length(); index++) {
+                    JSONObject resultsJSONObject = results.getJSONObject(index);
+                    MovieResultsPage movieResultsPage = new MovieResultsPage(resultsJSONObject);
+                    movieResultsPageList.add(movieResultsPage);
+                }
+                return movieResultsPageList;
+            }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -54,22 +67,24 @@ public class TmdbSearch {
         return null;
     }
 
-    public List<SeriesResultsPage> searchSeries(String query){
+    public List<SeriesResultsPage> searchSeries(String query) {
         String searchURL = TMDB_BASIC + TMDB_SERIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
-        JsonReader jsonReader = null;
 
         try {
-            jsonReader = new JsonReader(searchURL);
+            JsonReader jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
             List<SeriesResultsPage> seriesResultsPageList = new ArrayList<>();
-            int resultsLength = ((JSONArray) jsonObject.get("results")).length();
 
-            for(int index = 0; index < resultsLength; index++) {
-                SeriesResultsPage seriesResultsPage = new SeriesResultsPage(jsonObject, index);
-                seriesResultsPageList.add(seriesResultsPage);
+            if (jsonObject != null) {
+                JSONArray results = (JSONArray) jsonObject.get("results");
+
+                for (int index = 0; index < results.length(); index++) {
+                    JSONObject resultsJSONObject = results.getJSONObject(index);
+                    SeriesResultsPage seriesResultsPage = new SeriesResultsPage(resultsJSONObject);
+                    seriesResultsPageList.add(seriesResultsPage);
+                }
+                return seriesResultsPageList;
             }
-
-            return seriesResultsPageList;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

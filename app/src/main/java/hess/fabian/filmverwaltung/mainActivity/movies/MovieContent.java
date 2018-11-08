@@ -30,8 +30,6 @@ public class MovieContent {
     }
 
 
-
-
     public static class MovieItem implements Serializable {
         public final String id;
         public final String title;
@@ -49,7 +47,5 @@ public class MovieContent {
         public String toString() {
             return title;
         }
-
-
     }
 }
