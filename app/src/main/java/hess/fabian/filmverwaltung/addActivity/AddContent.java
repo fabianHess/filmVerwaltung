@@ -24,7 +24,19 @@ public class AddContent {
     }
 
     public AddItem getItem(int position) {
-        return ITEM_MAP.get(ITEMS.get(position));
+        AddContent.AddItem item = ITEMS.get(position);
+
+        return item;
+    }
+
+    public void removeItem(int position) {
+        ITEM_MAP.remove(ITEMS.get(position));
+        ITEMS.remove(position);
+    }
+
+    public void removeAllItems() {
+        ITEM_MAP.clear();
+        ITEMS.clear();
     }
 
 

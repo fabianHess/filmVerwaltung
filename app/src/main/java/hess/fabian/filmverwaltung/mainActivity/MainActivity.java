@@ -80,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         });
     }
 
-
+    // Only for testing purpose
+    // Please replace this with loading function
     public void initMovies() {
         MovieContent movieContent = new MovieContent();
         MovieContent.MovieItem item = new MovieContent.MovieItem("1", "Film1", "Some text for the detail activity.");

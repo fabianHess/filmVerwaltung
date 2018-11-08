@@ -1,9 +1,14 @@
 package hess.fabian.filmverwaltung.tmdbApi;
 
+import android.graphics.Movie;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Fabian on 04.03.2018.
@@ -27,16 +32,21 @@ public class TmdbSearch {
 
     }
 
-    public MovieResultsPage searchMovie(String query) {
+    public List<MovieResultsPage> searchMovie(String query) {
         String searchURL = TMDB_BASIC + TMDB_MOVIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
         JsonReader jsonReader = null;
 
         try {
             jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
-            MovieResultsPage movieResultsPage = new MovieResultsPage(jsonObject);
+            List<MovieResultsPage> movieResultsPageList = new ArrayList<>();
 
-            return movieResultsPage;
+            for(int index = 0; index < jsonObject.length(); index++) {
+                MovieResultsPage movieResultsPage = new MovieResultsPage(jsonObject, index);
+                movieResultsPageList.add(movieResultsPage);
+            }
+
+            return movieResultsPageList;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -44,16 +54,22 @@ public class TmdbSearch {
         return null;
     }
 
-    public TvResultsPage searchSeries(String query){
+    public List<SeriesResultsPage> searchSeries(String query){
         String searchURL = TMDB_BASIC + TMDB_SERIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
         JsonReader jsonReader = null;
 
         try {
             jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
-            TvResultsPage seriesResultsPage = new TvResultsPage(jsonObject);
+            List<SeriesResultsPage> seriesResultsPageList = new ArrayList<>();
+            int resultsLength = ((JSONArray) jsonObject.get("results")).length();
 
-            return seriesResultsPage;
+            for(int index = 0; index < resultsLength; index++) {
+                SeriesResultsPage seriesResultsPage = new SeriesResultsPage(jsonObject, index);
+                seriesResultsPageList.add(seriesResultsPage);
+            }
+
+            return seriesResultsPageList;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

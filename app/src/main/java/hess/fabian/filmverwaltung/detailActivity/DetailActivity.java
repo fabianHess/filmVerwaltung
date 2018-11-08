@@ -27,18 +27,18 @@ public class DetailActivity extends AppCompatActivity {
 
 
         TmdbSearch tmdbSearch = new TmdbSearch();
-        MovieResultsPage movieResultsPage = tmdbSearch.searchMovie("Harry Potter");
+        //MovieResultsPage movieResultsPage = tmdbSearch.searchMovie("Harry Potter").get(0);
 
 
         Intent intent = getIntent();
         if(intent.getSerializableExtra("movies") != null) {
             MovieContent.MovieItem item = (MovieContent.MovieItem) intent.getSerializableExtra("movies");
-            //toolbar.setTitle(item.title);
-            toolbar.setTitle(movieResultsPage.getTitle()); // TestTitle
+            toolbar.setTitle(item.title);
+            //toolbar.setTitle(movieResultsPage.getTitle()); // TestTitle
             setSupportActionBar(toolbar);
 
-            //textView.setText(item.overview);
-            textView.setText(movieResultsPage.getOverview());
+            textView.setText(item.overview);
+            //textView.setText(movieResultsPage.getOverview()); //Test overview
         }
         else if(intent.getSerializableExtra("series") != null) {
             SeriesContent.SeriesItem item = (SeriesContent.SeriesItem) intent.getSerializableExtra("series");

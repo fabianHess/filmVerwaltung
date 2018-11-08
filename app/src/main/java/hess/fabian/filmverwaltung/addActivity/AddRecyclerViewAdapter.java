@@ -14,18 +14,25 @@ public class AddRecyclerViewAdapter extends RecyclerView.Adapter<AddRecyclerView
 
 
     public AddRecyclerViewAdapter (AddContent value){
-        this.items= value;
+        this.items = value;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View listItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add, parent, false);
+        View listItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_add, parent, false);
         return new ViewHolder(listItem);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.textView.setText(items.getItem(position).getTitle());
+        System.out.print(items);
+
+        AddContent.AddItem item = items.getItem(position);
+        holder.mIdView.setText(item.getTitle());
+    }
+
+    public void clear(AddContent resetVal) {
+        this.items = resetVal;
     }
 
     @Override
@@ -33,12 +40,24 @@ public class AddRecyclerViewAdapter extends RecyclerView.Adapter<AddRecyclerView
         return items.getLength();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView;
+    public void addItems(AddContent item)
+    {
+        this.items = item;
+    }
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.id_add);
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public final View mView;
+        public final TextView mIdView;
+        public TextView mContentView;
+        public AddContent.AddItem mItem;
+
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mIdView = view.findViewById(R.id.id_add);
+            mContentView = view.findViewById(R.id.content_add);
         }
     }
 }

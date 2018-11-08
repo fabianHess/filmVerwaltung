@@ -25,10 +25,13 @@ public class MovieResultsPage {
     private String release_date;
 
 
-    public MovieResultsPage(JSONObject jsonObject) throws JSONException {
-        JSONArray results = (JSONArray) jsonObject.get("results");
-        JSONObject object = results.getJSONObject(0);
-        extractValues(object);
+    public MovieResultsPage(JSONObject jsonObject, int resultNo) throws JSONException {
+        if(jsonObject != null)
+        {
+            JSONArray results = (JSONArray) jsonObject.get("results");
+            JSONObject object = results.getJSONObject(resultNo);
+            extractValues(object);
+        }
     }
 
     private void extractValues(JSONObject jsonObject) {

@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recyclerview_add"
+    android:name="hess.fabian.filmverwaltung.addActivity.AddActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/id_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
-
-        <TextView
-            android:id="@+id/content_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
-
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="hess.fabian.filmverwaltung.addActivity.AddContent"
+    tools:listitem="@layout/content_add" />
