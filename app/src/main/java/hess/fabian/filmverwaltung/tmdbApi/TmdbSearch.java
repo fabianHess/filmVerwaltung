@@ -9,11 +9,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import hess.fabian.filmverwaltung.R;
+
 /**
  * Created by Fabian on 04.03.2018.
  */
 
 public class TmdbSearch {
+
+    private static final String movies = "movies";
+    private static final String series = "series";
 
     private static final String TMDB_BASIC = "https://api.themoviedb.org/3/search/";
     private static final String TMDB_MOVIES = "movie?";
@@ -35,27 +40,23 @@ public class TmdbSearch {
     "poster_sizes": ["w92", "w154", "w185", "w342", "w500", "w780", "original"],
     */
 
-
-
-
-
     public TmdbSearch(){
     }
 
-    public List<MovieResultsPage> searchMovie(String query) {
+    public List<ResultsPage> searchMovie(String query) {
         String searchURL = TMDB_BASIC + TMDB_MOVIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
 
         try {
             JsonReader jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
-            List<MovieResultsPage> movieResultsPageList = new ArrayList<>();
+            List<ResultsPage> movieResultsPageList = new ArrayList<>();
 
             if (jsonObject != null) {
                 JSONArray results = (JSONArray) jsonObject.get("results");
 
-                for (int index = 0; index < results.length(); index++) {
+                for (int index = 0; index < results.length() || index < 5; index++) {
                     JSONObject resultsJSONObject = results.getJSONObject(index);
-                    MovieResultsPage movieResultsPage = new MovieResultsPage(resultsJSONObject);
+                    ResultsPage movieResultsPage = new ResultsPage(resultsJSONObject, movies);
                     movieResultsPageList.add(movieResultsPage);
                 }
                 return movieResultsPageList;
@@ -67,20 +68,20 @@ public class TmdbSearch {
         return null;
     }
 
-    public List<SeriesResultsPage> searchSeries(String query) {
+    public List<ResultsPage> searchSeries(String query) {
         String searchURL = TMDB_BASIC + TMDB_SERIES + TMDB_API_KEY + TMDB_QUERY + query + TMDB_LANGUAGE_DE;
 
         try {
             JsonReader jsonReader = new JsonReader(searchURL);
             JSONObject jsonObject = jsonReader.getJsonObject();
-            List<SeriesResultsPage> seriesResultsPageList = new ArrayList<>();
+            List<ResultsPage> seriesResultsPageList = new ArrayList<>();
 
             if (jsonObject != null) {
                 JSONArray results = (JSONArray) jsonObject.get("results");
 
-                for (int index = 0; index < results.length(); index++) {
+                for (int index = 0; index < results.length() || index < 5; index++) {
                     JSONObject resultsJSONObject = results.getJSONObject(index);
-                    SeriesResultsPage seriesResultsPage = new SeriesResultsPage(resultsJSONObject);
+                    ResultsPage seriesResultsPage = new ResultsPage(resultsJSONObject, series);
                     seriesResultsPageList.add(seriesResultsPage);
                 }
                 return seriesResultsPageList;

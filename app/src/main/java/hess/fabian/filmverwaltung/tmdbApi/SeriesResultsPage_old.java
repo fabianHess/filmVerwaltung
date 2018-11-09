@@ -6,80 +6,75 @@ import android.os.Parcelable;
 import org.json.JSONObject;
 
 /**
- * Created by Fabian on 04.03.2018.
+ * Created by Fabian on 08.11.2018
  */
+public class SeriesResultsPage_old implements Parcelable {
 
-public class MovieResultsPage implements Parcelable {
-
-    private int vote_count;
+    private String original_name;
     private int id;
-    private boolean video;
-    private double vote_average;
     private String title;
-    private double popularity;
+    private int vote_count;
+    private double vote_average;
     private String poster_path;
+    private String first_air_date;
+    private double popularity;
+    private int[] genre_ids;
     private String original_language;
-    private String original_title;
-    //genre_ids: 0	12; 1	14; 2	10751;
     private String backdrop_path;
-    private boolean adult;
     private String overview;
-    private String release_date;
     private Bitmap poster;
     private Bitmap backdrop;
 
-    public MovieResultsPage(JSONObject jsonObject) {
-        vote_count          = jsonObject.optInt("vote_count");
+    public SeriesResultsPage_old(JSONObject jsonObject) {
+        original_name       = jsonObject.optString("original_name");
         id                  = jsonObject.optInt("id");
-        video               = jsonObject.optBoolean("video");
-        vote_average        = jsonObject.optDouble("vote_average");
-        title               = jsonObject.optString("title");
-        popularity          = jsonObject.optDouble("popularity");
+        title               = jsonObject.optString("name");
+        vote_count          = jsonObject.optInt("vote_count");
+        vote_average        = jsonObject.optInt("vote_average");
         poster_path         = jsonObject.optString("poster_path");
+        first_air_date      = jsonObject.optString("first_air_date");
+        popularity          = jsonObject.optDouble("popularity");
+        //genre_ids           = jsonObject.opt("genre_ids");
         original_language   = jsonObject.optString("original_language");
-        original_title      = jsonObject.optString("original_title");
         backdrop_path       = jsonObject.optString("backdrop_path");
-        adult               = jsonObject.optBoolean("adult");
         overview            = jsonObject.optString("overview");
-        release_date        = jsonObject.optString("release_date");
     }
 
-    protected MovieResultsPage(Parcel in) {
-        vote_count = in.readInt();
+    protected SeriesResultsPage_old(Parcel in) {
+        original_name = in.readString();
         id = in.readInt();
-        video = in.readByte() != 0;
-        vote_average = in.readDouble();
         title = in.readString();
-        popularity = in.readDouble();
+        vote_count = in.readInt();
+        vote_average = in.readDouble();
         poster_path = in.readString();
+        first_air_date = in.readString();
+        popularity = in.readDouble();
+        genre_ids = in.createIntArray();
         original_language = in.readString();
-        original_title = in.readString();
         backdrop_path = in.readString();
-        adult = in.readByte() != 0;
         overview = in.readString();
-        release_date = in.readString();
         poster = in.readParcelable(Bitmap.class.getClassLoader());
         backdrop = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
-    public static final Creator<MovieResultsPage> CREATOR = new Creator<MovieResultsPage>() {
+    public static final Creator<SeriesResultsPage_old> CREATOR = new Creator<SeriesResultsPage_old>() {
         @Override
-        public MovieResultsPage createFromParcel(Parcel in) {
-            return new MovieResultsPage(in);
+        public SeriesResultsPage_old createFromParcel(Parcel in) {
+            return new SeriesResultsPage_old(in);
         }
 
         @Override
-        public MovieResultsPage[] newArray(int size) {
-            return new MovieResultsPage[size];
+        public SeriesResultsPage_old[] newArray(int size) {
+            return new SeriesResultsPage_old[size];
         }
     };
 
-    public int getVote_count() {
-        return vote_count;
+    public String getOriginal_name() {
+        return original_name;
     }
 
-    public void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
+    public void setOriginal_name(String original_name) {
+        this.original_name = original_name;
     }
 
     public int getId() {
@@ -90,12 +85,20 @@ public class MovieResultsPage implements Parcelable {
         this.id = id;
     }
 
-    public boolean isVideo() {
-        return video;
+    public String getTitle() {
+        return title;
     }
 
-    public void setVideo(boolean video) {
-        this.video = video;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getVote_count() {
+        return vote_count;
+    }
+
+    public void setVote_count(int vote_count) {
+        this.vote_count = vote_count;
     }
 
     public double getVote_average() {
@@ -106,12 +109,20 @@ public class MovieResultsPage implements Parcelable {
         this.vote_average = vote_average;
     }
 
-    public String getTitle() {
-        return title;
+    public String getPoster_path() {
+        return poster_path;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
+    }
+
+    public String getFirst_air_date() {
+        return first_air_date;
+    }
+
+    public void setFirst_air_date(String first_air_date) {
+        this.first_air_date = first_air_date;
     }
 
     public double getPopularity() {
@@ -122,12 +133,12 @@ public class MovieResultsPage implements Parcelable {
         this.popularity = popularity;
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    public int[] getGenre_ids() {
+        return genre_ids;
     }
 
-    public void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    public void setGenre_ids(int[] genre_ids) {
+        this.genre_ids = genre_ids;
     }
 
     public String getOriginal_language() {
@@ -138,14 +149,6 @@ public class MovieResultsPage implements Parcelable {
         this.original_language = original_language;
     }
 
-    public String getOriginal_title() {
-        return original_title;
-    }
-
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
-    }
-
     public String getBackdrop_path() {
         return backdrop_path;
     }
@@ -154,28 +157,12 @@ public class MovieResultsPage implements Parcelable {
         this.backdrop_path = backdrop_path;
     }
 
-    public boolean isAdult() {
-        return adult;
-    }
-
-    public void setAdult(boolean adult) {
-        this.adult = adult;
-    }
-
     public String getOverview() {
         return overview;
     }
 
     public void setOverview(String overview) {
         this.overview = overview;
-    }
-
-    public String getRelease_date() {
-        return release_date;
-    }
-
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
     }
 
     public Bitmap getPoster() {
@@ -201,19 +188,18 @@ public class MovieResultsPage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(vote_count);
+        parcel.writeString(original_name);
         parcel.writeInt(id);
-        parcel.writeByte((byte) (video ? 1 : 0));
-        parcel.writeDouble(vote_average);
         parcel.writeString(title);
-        parcel.writeDouble(popularity);
+        parcel.writeInt(vote_count);
+        parcel.writeDouble(vote_average);
         parcel.writeString(poster_path);
+        parcel.writeString(first_air_date);
+        parcel.writeDouble(popularity);
+        parcel.writeIntArray(genre_ids);
         parcel.writeString(original_language);
-        parcel.writeString(original_title);
         parcel.writeString(backdrop_path);
-        parcel.writeByte((byte) (adult ? 1 : 0));
         parcel.writeString(overview);
-        parcel.writeString(release_date);
         parcel.writeParcelable(poster, i);
         parcel.writeParcelable(backdrop, i);
     }

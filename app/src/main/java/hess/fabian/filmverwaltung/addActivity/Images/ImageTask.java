@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import hess.fabian.filmverwaltung.addActivity.AddRecyclerViewAdapter;
-import hess.fabian.filmverwaltung.tmdbApi.SeriesResultsPage;
+import hess.fabian.filmverwaltung.tmdbApi.ResultsPage;
 
 
 // Images
@@ -17,24 +17,23 @@ import hess.fabian.filmverwaltung.tmdbApi.SeriesResultsPage;
     "backdrop_sizes": ["w300", "w780", "w1280", "original"],
     "poster_sizes": ["w92", "w154", "w185", "w342", "w500", "w780", "original"],
     */
-public class SeriesImageTask extends AsyncTask<SeriesResultsPage, Integer, Bitmap> {
+public class ImageTask extends AsyncTask<ResultsPage, Integer, ResultsPage> {
 
     private static final String TMDB_POSTER_BASIC = "https://image.tmdb.org/t/p/";
     private static final String TMDB_POSTER_WIDTH = "w154";
 
-    private SeriesResultsPage item;
     private AddRecyclerViewAdapter adapter;
 
 
-    public SeriesImageTask(AddRecyclerViewAdapter adapter) {
-                this.adapter = adapter;
+    public ImageTask(AddRecyclerViewAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Override
-    protected Bitmap doInBackground(SeriesResultsPage[] items) {
-        item = items[0];
+    protected ResultsPage doInBackground(ResultsPage[] resultsPages) {
+        ResultsPage resultsPage = resultsPages[0];
 
-        String imageUrl = TMDB_POSTER_BASIC + TMDB_POSTER_WIDTH + item.getPoster_path();
+        String imageUrl = TMDB_POSTER_BASIC + TMDB_POSTER_WIDTH + resultsPage.getPoster_path();
 
         try {
             InputStream inputStream = (InputStream) new URL(imageUrl).getContent();
@@ -42,7 +41,8 @@ public class SeriesImageTask extends AsyncTask<SeriesResultsPage, Integer, Bitma
             inputStream.close();
 
             if (poster != null) {
-                return poster;
+                resultsPage.setPoster(poster);
+                return resultsPage;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,9 +54,8 @@ public class SeriesImageTask extends AsyncTask<SeriesResultsPage, Integer, Bitma
     }
 
     @Override
-    protected void onPostExecute(Bitmap poster) {
-        super.onPostExecute(poster);
-        item.setPoster(poster);
+    protected void onPostExecute(ResultsPage resultsPage) {
+        super.onPostExecute(resultsPage);
         adapter.notifyDataSetChanged();
     }
 }

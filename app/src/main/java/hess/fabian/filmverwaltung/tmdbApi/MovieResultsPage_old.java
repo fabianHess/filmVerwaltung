@@ -3,20 +3,16 @@ package hess.fabian.filmverwaltung.tmdbApi;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Fabian on 04.03.2018.
  */
 
-public class ResultsPage implements Parcelable {
+public class MovieResultsPage_old implements Parcelable {
 
-    private String media;
-    private int id;
     private int vote_count;
+    private int id;
     private boolean video;
     private double vote_average;
     private String title;
@@ -29,52 +25,46 @@ public class ResultsPage implements Parcelable {
     private boolean adult;
     private String overview;
     private String release_date;
-
     private Bitmap poster;
     private Bitmap backdrop;
 
-    private final String movies = "movies";
-    private final String series = "series";
-
-
-    public ResultsPage(JSONObject jsonObject, String mediaType) {
-        media               = mediaType;
-        id                  = jsonObject.optInt("id");
-        overview            = jsonObject.optString("overview");
-        poster_path         = jsonObject.optString("poster_path");
-        backdrop_path       = jsonObject.optString("backdrop_path");
-
-        original_title      = jsonObject.optString("original_title");
-        original_language   = jsonObject.optString("original_language");
-
-        popularity          = jsonObject.optDouble("popularity");
+    public MovieResultsPage_old(JSONObject jsonObject) {
         vote_count          = jsonObject.optInt("vote_count");
+        id                  = jsonObject.optInt("id");
+        video               = jsonObject.optBoolean("video");
         vote_average        = jsonObject.optDouble("vote_average");
-
-        //genre_ids           = jsonObject.opt("genre_ids");
-
-        switch (media) {
-            case movies:
-                title = jsonObject.optString("title");
-                original_title = jsonObject.optString("original_title");
-                release_date = jsonObject.optString("release_date");
-                adult = jsonObject.optBoolean("adult");
-                video = jsonObject.optBoolean("video");
-                break;
-            case series:
-                title = jsonObject.optString("name");
-                original_title = jsonObject.optString("original_name");
-                release_date = jsonObject.optString("first_air_date");
-                break;
-            default:
-                return;
-        }
+        title               = jsonObject.optString("title");
+        popularity          = jsonObject.optDouble("popularity");
+        poster_path         = jsonObject.optString("poster_path");
+        original_language   = jsonObject.optString("original_language");
+        original_title      = jsonObject.optString("original_title");
+        backdrop_path       = jsonObject.optString("backdrop_path");
+        adult               = jsonObject.optBoolean("adult");
+        overview            = jsonObject.optString("overview");
+        release_date        = jsonObject.optString("release_date");
     }
 
-    protected ResultsPage(Parcel in) {
-        media = in.readString();
-        id = in.readInt();
+    /***
+     * original_title
+     * id
+     * title
+     * vote_count
+     * vote_average
+     * poster_path
+     * first_air_date - release
+     * popularity
+     * original_lang
+     * backdrop_path
+     * overview
+     *
+     * Movie
+     * adult
+     * video
+     */
+
+    protected MovieResultsPage_old(Parcel in) {
         vote_count = in.readInt();
+        id = in.readInt();
         video = in.readByte() != 0;
         vote_average = in.readDouble();
         title = in.readString();
@@ -90,24 +80,24 @@ public class ResultsPage implements Parcelable {
         backdrop = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
-    public static final Creator<ResultsPage> CREATOR = new Creator<ResultsPage>() {
+    public static final Creator<MovieResultsPage_old> CREATOR = new Creator<MovieResultsPage_old>() {
         @Override
-        public ResultsPage createFromParcel(Parcel in) {
-            return new ResultsPage(in);
+        public MovieResultsPage_old createFromParcel(Parcel in) {
+            return new MovieResultsPage_old(in);
         }
 
         @Override
-        public ResultsPage[] newArray(int size) {
-            return new ResultsPage[size];
+        public MovieResultsPage_old[] newArray(int size) {
+            return new MovieResultsPage_old[size];
         }
     };
 
-    public String getMedia() {
-        return media;
+    public int getVote_count() {
+        return vote_count;
     }
 
-    public void setMedia(String media) {
-        this.media = media;
+    public void setVote_count(int vote_count) {
+        this.vote_count = vote_count;
     }
 
     public int getId() {
@@ -116,14 +106,6 @@ public class ResultsPage implements Parcelable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getVote_count() {
-        return vote_count;
-    }
-
-    public void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
     }
 
     public boolean isVideo() {
@@ -237,9 +219,8 @@ public class ResultsPage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(media);
-        parcel.writeInt(id);
         parcel.writeInt(vote_count);
+        parcel.writeInt(id);
         parcel.writeByte((byte) (video ? 1 : 0));
         parcel.writeDouble(vote_average);
         parcel.writeString(title);
@@ -253,7 +234,5 @@ public class ResultsPage implements Parcelable {
         parcel.writeString(release_date);
         parcel.writeParcelable(poster, i);
         parcel.writeParcelable(backdrop, i);
-        parcel.writeString(movies);
-        parcel.writeString(series);
     }
 }

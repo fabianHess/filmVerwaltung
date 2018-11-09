@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     private final String series = "series";
     private String media = movies;
 
+    private final int ADDCONTENT = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         PagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
 
         initMovies();
         initSeries();
@@ -114,14 +117,12 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         if(id == R.id.add_settings) {
             Intent intent = new Intent(this, AddActivity.class);
             intent.putExtra("media", this.media);
-            startActivity(intent);
+            startActivityForResult(intent, ADDCONTENT);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     public void onListFragmentInteraction(MovieContent.MovieItem item) {
@@ -131,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("movies", (Serializable) item);
         startActivity(intent);
-
-
     }
 
     @Override
@@ -140,5 +139,10 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("series", item);
         startActivity(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(this, "Funktioniert", Toast.LENGTH_SHORT).show();
     }
 }

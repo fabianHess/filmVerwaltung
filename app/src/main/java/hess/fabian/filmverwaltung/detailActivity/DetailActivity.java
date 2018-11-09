@@ -1,24 +1,24 @@
 package hess.fabian.filmverwaltung.detailActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.concurrent.ExecutionException;
-
 import hess.fabian.filmverwaltung.R;
-import hess.fabian.filmverwaltung.addActivity.Images.MovieBackdropTask;
-import hess.fabian.filmverwaltung.mainActivity.series.SeriesContent;
-import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
-import hess.fabian.filmverwaltung.tmdbApi.SeriesResultsPage;
+import hess.fabian.filmverwaltung.addActivity.Images.BackdropTask;
+import hess.fabian.filmverwaltung.mainActivity.MainActivity;
+import hess.fabian.filmverwaltung.tmdbApi.ResultsPage;
 
 public class DetailActivity extends AppCompatActivity {
+
+    private String media;
+    private ResultsPage resultsPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,41 +32,35 @@ public class DetailActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if(bundle.getParcelable("movies") != null) {
-            MovieResultsPage item = bundle.getParcelable("movies");
-            toolbar.setTitle(item.getTitle());
-            setSupportActionBar(toolbar);
-
-            MovieBackdropTask backdropTask = new MovieBackdropTask();
-
-            ImageView poster = findViewById(R.id.poster_detail);
-            try {
-                item.setBackdrop(backdropTask.execute(item.getBackdrop_path()).get());
-                poster.setImageBitmap(item.getBackdrop());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            textView.setText(item.getOverview());
+            media = "movies";
         }
         else if(bundle.getParcelable("series") != null) {
-            SeriesResultsPage item = bundle.getParcelable("series");
-            toolbar.setTitle(item.getTitle());
-            setSupportActionBar(toolbar);
-
-            textView.setText(item.getOverview());
+            media = "series";
         }
         else {
             System.out.println("Error: False intent extra.");
             return;
         }
 
+        resultsPage = bundle.getParcelable(media);
+        toolbar.setTitle(resultsPage.getTitle());
+        setSupportActionBar(toolbar);
+        textView.setText(resultsPage.getOverview());
+
+        ImageView backdrop = findViewById(R.id.poster_detail);
+        BackdropTask backdropTask = new BackdropTask(backdrop);
+        backdropTask.execute(resultsPage);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(media, resultsPage);
+                intent.putExtras(bundle);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
     }

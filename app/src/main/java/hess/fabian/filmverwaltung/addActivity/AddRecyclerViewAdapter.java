@@ -10,18 +10,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import hess.fabian.filmverwaltung.R;
-import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
-import hess.fabian.filmverwaltung.tmdbApi.SeriesResultsPage;
+import hess.fabian.filmverwaltung.tmdbApi.ResultsPage;
 
 public class AddRecyclerViewAdapter extends RecyclerView.Adapter<AddRecyclerViewAdapter.ViewHolder> {
 
-    private List<MovieResultsPage> movieResultsPageList;
-    private List<SeriesResultsPage> seriesResultsPageList;
+    private List<ResultsPage> resultsPageList;
 
 
-    public AddRecyclerViewAdapter (List<MovieResultsPage> movieItems, List<SeriesResultsPage> seriesItems) {
-        movieResultsPageList = movieItems;
-        seriesResultsPageList = seriesItems;
+    public AddRecyclerViewAdapter (List<ResultsPage> items) {
+        resultsPageList = items;
     }
 
     @Override
@@ -32,45 +29,28 @@ public class AddRecyclerViewAdapter extends RecyclerView.Adapter<AddRecyclerView
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (null != movieResultsPageList) {
-            MovieResultsPage movieResultsPage = movieResultsPageList.get(position);
-            holder.mTitleView.setText(movieResultsPage.getTitle());
-            holder.mPosterView.setImageBitmap(movieResultsPage.getPoster());
+        if (null != resultsPageList) {
+            ResultsPage resultsPage = resultsPageList.get(position);
+            holder.mTitleView.setText(resultsPage.getTitle());
+            holder.mPosterView.setImageBitmap(resultsPage.getPoster());
         }
-        if (null != seriesResultsPageList) {
-            SeriesResultsPage seriesResultsPage = seriesResultsPageList.get(position);
-            holder.mTitleView.setText(seriesResultsPage.getTitle());
-            holder.mPosterView.setImageBitmap(seriesResultsPage.getPoster());
-        }
-
     }
 
     public void clear() {
-        seriesResultsPageList.clear();
-        movieResultsPageList.clear();
+        resultsPageList.clear();
     }
 
     @Override
     public int getItemCount() {
-        if (null != movieResultsPageList) {
-            return movieResultsPageList.size();
+        if (null != resultsPageList) {
+            return resultsPageList.size();
         }
-        else if (null != seriesResultsPageList) {
-            return seriesResultsPageList.size();
-        }
-        else {
-            return -1;
-        }
+        return 0;
     }
 
-    public void addMovieItem(List<MovieResultsPage> items) {
-        movieResultsPageList = items;
+    public void addItem(List<ResultsPage> items) {
+        resultsPageList = items;
     }
-
-    public void addSeriesItem(List<SeriesResultsPage> items) {
-        seriesResultsPageList = items;
-    }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

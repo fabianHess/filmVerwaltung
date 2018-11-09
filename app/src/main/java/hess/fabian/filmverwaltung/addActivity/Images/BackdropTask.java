@@ -3,12 +3,13 @@ package hess.fabian.filmverwaltung.addActivity.Images;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.widget.ImageView;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import hess.fabian.filmverwaltung.addActivity.AddRecyclerViewAdapter;
-import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
+import hess.fabian.filmverwaltung.tmdbApi.ResultsPage;
 
 
 // Images
@@ -17,32 +18,31 @@ import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
     "backdrop_sizes": ["w300", "w780", "w1280", "original"],
     "poster_sizes": ["w92", "w154", "w185", "w342", "w500", "w780", "original"],
     */
-public class MovieImageTask extends AsyncTask<MovieResultsPage, Integer, Bitmap> {
+public class BackdropTask extends AsyncTask<ResultsPage, Integer, ResultsPage> {
 
     private static final String TMDB_POSTER_BASIC = "https://image.tmdb.org/t/p/";
-    private static final String TMDB_POSTER_WIDTH = "w154";
+    private static final String TMDB_POSTER_WIDTH = "w500";
 
-    private MovieResultsPage item;
-    private AddRecyclerViewAdapter adapter;
+    private ImageView backdropView;
 
-
-    public MovieImageTask(AddRecyclerViewAdapter adapter) {
-        this.adapter = adapter;
+    public BackdropTask(ImageView backdropView) {
+        this.backdropView = backdropView;
     }
 
     @Override
-    protected Bitmap doInBackground(MovieResultsPage[] items) {
-        item = items[0];
+    protected ResultsPage doInBackground(ResultsPage[] reesultsPages) {
+        ResultsPage reesultsPage = reesultsPages[0];
 
-        String imageUrl = TMDB_POSTER_BASIC + TMDB_POSTER_WIDTH + item.getPoster_path();
+        String imageUrl = TMDB_POSTER_BASIC + TMDB_POSTER_WIDTH + reesultsPage.getBackdrop_path();
 
         try {
             InputStream inputStream = (InputStream) new URL(imageUrl).getContent();
-            Bitmap poster = BitmapFactory.decodeStream(inputStream);
+            Bitmap backdrop = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
-            if (poster != null) {
-                return poster;
+            if (backdrop != null) {
+                reesultsPage.setBackdrop(backdrop);
+                return reesultsPage;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,9 +54,8 @@ public class MovieImageTask extends AsyncTask<MovieResultsPage, Integer, Bitmap>
     }
 
     @Override
-    protected void onPostExecute(Bitmap poster) {
-        super.onPostExecute(poster);
-        item.setPoster(poster);
-        adapter.notifyDataSetChanged();
+    protected void onPostExecute(ResultsPage reesultsPage) {
+        super.onPostExecute(reesultsPage);
+        backdropView.setImageBitmap(reesultsPage.getBackdrop());
     }
 }

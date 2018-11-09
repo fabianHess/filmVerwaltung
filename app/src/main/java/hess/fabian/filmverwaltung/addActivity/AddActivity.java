@@ -9,19 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.SearchView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import hess.fabian.filmverwaltung.R;
-import hess.fabian.filmverwaltung.addActivity.Images.MovieImageTask;
-import hess.fabian.filmverwaltung.addActivity.Images.SeriesImageTask;
+import hess.fabian.filmverwaltung.addActivity.Images.ImageTask;
 import hess.fabian.filmverwaltung.detailActivity.DetailActivity;
-import hess.fabian.filmverwaltung.mainActivity.movies.MovieContent;
-import hess.fabian.filmverwaltung.mainActivity.series.SeriesContent;
-import hess.fabian.filmverwaltung.tmdbApi.MovieResultsPage;
-import hess.fabian.filmverwaltung.tmdbApi.SeriesResultsPage;
+import hess.fabian.filmverwaltung.tmdbApi.ResultsPage;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -29,8 +24,9 @@ public class AddActivity extends AppCompatActivity {
     private final String series = "series";
     private final String movies = "movies";
     private AddRecyclerViewAdapter adapter;
-    private List<MovieResultsPage> movieResultsPageList;
-    private List<SeriesResultsPage> seriesResultsPageList;
+    private List<ResultsPage> resultsPageList;
+
+    private final int ADDCONTENT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +34,6 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add);
         Toolbar toolbar = findViewById(R.id.toolbar_add);
         SearchView searchView = findViewById(R.id.searchview_add);
-
-
-
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview_add);
         recyclerView.setHasFixedSize(true);
@@ -50,19 +43,15 @@ public class AddActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         media = intent.getStringExtra("media");
+        resultsPageList = new ArrayList<>();
+        resultsPageList.clear();
 
         switch (media) {
             case movies:
-                movieResultsPageList = new ArrayList<>();
-                movieResultsPageList.clear();
-                seriesResultsPageList = null;
                 toolbar.setTitle("Neuen Film hinzufügen:");
                 setSupportActionBar(toolbar);
                 break;
             case series:
-                seriesResultsPageList = new ArrayList<>();
-                seriesResultsPageList.clear();
-                movieResultsPageList = null;
                 toolbar.setTitle("Neue Serie hinzufügen:");
                 setSupportActionBar(toolbar);
                 break;
@@ -71,7 +60,7 @@ public class AddActivity extends AppCompatActivity {
                 return;
         }
 
-        adapter = new AddRecyclerViewAdapter(movieResultsPageList, seriesResultsPageList);
+        adapter = new AddRecyclerViewAdapter(resultsPageList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -91,12 +80,7 @@ public class AddActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new AddRecyclerTouchListener(AddActivity.this, new AddRecyclerTouchListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                if (media.equals(movies)) {
-                    showDetails(movieResultsPageList.get(position), null);
-                }
-                else if (media.equals(series)) {
-                    showDetails(null, seriesResultsPageList.get(position));
-                }
+                showDetails(resultsPageList.get(position));
                 //Toast.makeText(AddActivity.this, position+ " is selected successfully", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(AddActivity.this, items.getItem(position) + " is selected successfully", Toast.LENGTH_SHORT).show();
             }
@@ -104,67 +88,44 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private boolean onQueryText(String query) {
+        // Download info from query
+        // TODO: Improve speed or async download
+        resultsPageList.clear();
+        adapter.notifyDataSetChanged();
+
         if(query.equals("")) {
             return false;
         }
-        // Download info from query
-        // TODO: Improve speed or async download
-        switch (media) {
-            case movies:
-                movieResultsPageList.clear();
-                adapter.notifyDataSetChanged();
-                MovieTask movieTask = new MovieTask(adapter);
-                try {
-                    movieResultsPageList = movieTask.execute(query).get();
 
-                    for(int index = 0; index < movieResultsPageList.size(); index++) {
-                        MovieImageTask movieImageTask = new MovieImageTask(adapter);
-                        movieImageTask.execute(movieResultsPageList.get(index));
-                    }
-                    return true;
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            case series:
-                seriesResultsPageList.clear();
-                adapter.notifyDataSetChanged();
-                SeriesTask seriesTask = new SeriesTask(adapter);
+        DownloadTask downloadTask = new DownloadTask(adapter, media);
+        try {
+            resultsPageList = downloadTask.execute(query).get();
 
-                try {
-                    seriesResultsPageList = seriesTask.execute(query).get();
-
-                    for(int index = 0; index < seriesResultsPageList.size(); index++) {
-                        SeriesImageTask seriesImageTask = new SeriesImageTask(adapter);
-                        seriesImageTask.execute(seriesResultsPageList.get(index));
-                    }
-                    return true;
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            default:
-                    return false;
+            for(int index = 0; index < resultsPageList.size(); index++) {
+                ImageTask movieImageTask = new ImageTask(adapter);
+                ResultsPage resultsPage = resultsPageList.get(index);
+                movieImageTask.execute(resultsPage);
+            }
+            return true;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public void showDetails(MovieResultsPage movieItem, SeriesResultsPage seriesItem) {
+    public void showDetails(ResultsPage item) {
         Intent intent = new Intent(this, DetailActivity.class);
         Bundle bundle = new Bundle();
+        bundle.putParcelable(media, item);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, ADDCONTENT);
+    }
 
-        switch (media) {
-            case movies:
-                bundle.putParcelable(media, movieItem);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                return;
-            case series:
-                bundle.putParcelable(media, seriesItem);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                return;
-            default:
-                return;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && data != null) {
+            setResult(ADDCONTENT, data);
+            finish();
         }
     }
 }
